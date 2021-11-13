@@ -1,1 +1,1 @@
-# exponential-madness
+A cool incremental game
