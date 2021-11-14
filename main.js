@@ -1376,7 +1376,7 @@ document.addEventListener("keydown", function(input){
 				maxReset();
 			}
 			break;
-		case "p":
+		case "m":
 			mu();
 			break;
 	}
