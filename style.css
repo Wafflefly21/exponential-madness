@@ -87,19 +87,19 @@ button.achievement {
   height: 100px;
   font-size: 20px;
 }
-button.plexal {
+button.mu {
   color: purple;
   border: 2px solid purple;
 }
-button.dark.plexal {
+button.dark.mu {
   color: magenta;
   border: 2px solid magenta;
 }
-button.plexal:not(.noHover):hover {
+button.mu:not(.noHover):hover {
   background-color: purple;
   color: white;
 }
-button.dark.plexal:not(.noHover):hover {
+button.dark.mu:not(.noHover):hover {
   background-color: magenta;
   color: black;
 }
