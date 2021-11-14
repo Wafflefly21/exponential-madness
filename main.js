@@ -33,7 +33,7 @@ function nextFrame(timeStamp) {
 		calcAll();
 		lastFrame = timeStamp;
 		game.permaStat.timePlayed += sinceLastFrame;
-		game.plexal.time += sinceLastFrame;
+		game.mu.time += sinceLastFrame;
 	}
 	if (sinceLastSave >= game.autoSaveSpeed) {
 		if (game.autoSave) {
@@ -210,7 +210,7 @@ function newGame() {
 			timePlayed: 0,
 			highestNum: new Decimal(10),
 			totalReset: new Decimal(0),
-			totalPlexal: new Decimal(0),
+			totalMu: new Decimal(0),
 		},
 		auto: {
 			tabUnlocked: false,
@@ -242,7 +242,7 @@ function newGame() {
 			costScaling: new Decimal(1e1),
 			unlocked: false
 		},
-		plexal: {
+		mu: {
 			amount: new Decimal(0),
 			essence: new Decimal(0),
 			upgrade: {
@@ -554,11 +554,10 @@ function notify(message, subMessage, bgColor) {
  *********/
 
 function updateTab() {
-	if (game.plexal.amount.greaterThanOrEqualTo(1)) {
-		document.getElementById("plexalStatTabButton").classList.remove('hidden');
+		document.getElementById("muStatTabButton").classList.remove('hidden');
 	} else {
-		document.getElementById("plexalStatTabButton").classList.add('hidden');
-		if (!document.getElementById("plexalStat").classList.contains('hidden')) {
+		document.getElementById("muStatTabButton").classList.add('hidden');
+		if (!document.getElementById("muStat").classList.contains('hidden')) {
 			toTab('normalStat');
 		}
 	}
@@ -572,11 +571,11 @@ function updateTab() {
 
 function getPower(n) {
 	let power = game.mult.powerPerBuy.pow(game.mult.upgradeAmount[n]).mul(game.reset.totalBoost).mul(game.iterator.totalBoost)
-	if (game.plexal.upgrade.unlocked[1]) {
-		power = power.mul(game.plexal.upgrade.boost[1])
+	if (game.mu.upgrade.unlocked[1]) {
+		power = power.mul(game.mu.upgrade.boost[1])
 	}
-	if (game.plexal.upgrade.unlocked[3]) {
-		power = power.mul(game.plexal.upgrade.boost[3]);
+	if (game.mu.upgrade.unlocked[3]) {
+		power = power.mul(game.mu.upgrade.boost[3]);
 	}
 	return power;
 }
@@ -585,8 +584,8 @@ function calcMult() {
 	let m = game.mult;
 	for (let i = 1; i <= game.mult.actualMaxMult; i++) {
 		m.powerPerBuy = (new Decimal(2))
-		if (game.plexal.upgrade.unlocked[2]) {
-			m.powerPerBuy = m.powerPerBuy.mul(game.plexal.upgrade.boost[2]);
+		if (game.mu.upgrade.unlocked[2]) {
+			m.powerPerBuy = m.powerPerBuy.mul(game.mu.upgrade.boost[2]);
 		}
 		m.generation[i] = m.amount[i].pow(m.power[i]); 
 		m.cost[i] = m.baseCost[i].pow(m.costIncrease[i].pow(m.upgradeAmount[i]));
@@ -624,8 +623,8 @@ function updateMult() {
 function calcReset() {
 	let r = game.reset;
 	r.boost = new Decimal(3);
-	if (game.plexal.upgrade.unlocked[4]) {
-		r.boost = r.boost.mul(game.plexal.upgrade.boost[4]);
+	if (game.mu.upgrade.unlocked[4]) {
+		r.boost = r.boost.mul(game.mu.upgrade.boost[4]);
 	}
 	r.totalBoost = r.boost.pow(r.amount);
 	r.costIncrease = r.baseCostIncrease.mul(r.costScaling.pow(r.amount));
@@ -658,57 +657,57 @@ function updateReset() {
 		document.getElementById("resetButton").classList.remove('enabled');
 		document.getElementById("resetButton").classList.add('disabled');  
 	}
-	if (game.plexal.upgrade.unlocked[9]) {
+	if (game.mu.upgrade.unlocked[9]) {
 		document.getElementById("maxResetButton").classList.remove('hidden');
 	} else {
 		document.getElementById("maxResetButton").classList.add('hidden');
 	}
 }
 
-function getPlexalGain() {
+function getMuGain() {
 	let gain = game.number.log(Decimal.fromComponents(1, 2, 100)).root(666);
-	if (game.plexal.upgrade.unlocked[6]) {
-		gain = gain.mul(game.plexal.upgrade.boost[6]);
+	if (game.mu.upgrade.unlocked[6]) {
+		gain = gain.mul(game.mu.upgrade.boost[6]);
 	}
 	return gain.floor();
 }
 
-function calcPlexal() {
-	if (game.plexal.amount.greaterThan(new Decimal(0))) {
+function calcMu() {
+	if (game.mu.amount.greaterThan(new Decimal(0))) {
 		achievement.inflate.hidden = false;
 		achievement.startAuto.hidden = false;
 		achievement.googolduplex.hidden = false;
 		achievement.googoltriplex.hidden = false;
-		achievement.plexalFast.hidden = false;
-		achievement.plexalNoReset.hidden = false;
+		achievement.muFast.hidden = false;
+		achievement.muNoReset.hidden = false;
 	}
-	if (game.plexal.unlocked) {
-		achievement.plexal.hidden = false;
+	if (game.mu.unlocked) {
+		achievement.mu.hidden = false;
 	}
 	calcReset();
 }
 
-function updatePlexal() {
-	if (game.plexal.amount.greaterThan(new Decimal(0))) {
-		document.getElementById("plexalTabButton").classList.remove('hidden');
+function updateMu() {
+	if (game.mu.amount.greaterThan(new Decimal(0))) {
+		document.getElementById("muTabButton").classList.remove('hidden');
 	} else {
-		document.getElementById("plexalTabButton").classList.add('hidden');
+		document.getElementById("muTabButton").classList.add('hidden');
 	}
-	if (game.plexal.unlocked == true) {
-		document.getElementById("plexButton").classList.remove('hidden');
+	if (game.mu.unlocked == true) {
+		document.getElementById("muButton").classList.remove('hidden');
 	} else {
-		document.getElementById("plexButton").classList.add('hidden');
+		document.getElementById("muButton").classList.add('hidden');
 	}
 	if (game.number.greaterThanOrEqualTo(Decimal.fromComponents(1, 2, 100))) {
-		document.getElementById("plexButton").innerHTML = "Reset all of your progress so far to gain " + findDisplay(getPlexalGain()) + " Plexal Essence";
-		document.getElementById("plexButton").classList.remove('disabled');
-		document.getElementById("plexButton").classList.add('plexal');
+		document.getElementById("muButton").innerHTML = "Reset all of your progress so far to gain " + findDisplay(getMuGain()) + " Mu Essence";
+		document.getElementById("muButton").classList.remove('disabled');
+		document.getElementById("muButton").classList.add('mu');
 	} else {
-		document.getElementById("plexButton").innerHTML = "Requires: ee100";
-		document.getElementById("plexButton").classList.remove('plexal');
-		document.getElementById("plexButton").classList.add('disabled');  
+		document.getElementById("muButton").innerHTML = "Requires: ee100";
+		document.getElementById("muButton").classList.remove('mu');
+		document.getElementById("muButton").classList.add('disabled');  
 	}
-	document.getElementById("plexalEssenceAmount").innerHTML = findDisplay(game.plexal.essence);
+	document.getElementById("muEssenceAmount").innerHTML = findDisplay(game.mu.essence);
 }
 
 function calcIterator() {
@@ -741,7 +740,7 @@ function updateIterator() {
 function calcIteratorUpg() {
 	let it = game.iterator;
 	let upg = it.upgrade;
-	if (game.plexal.upgrade.unlocked[8]) {
+	if (game.mu.upgrade.unlocked[8]) {
 		upg.boost = upg.baseBoost.mul(game.reset.totalBoost);
 	}
 	upg.totalBoost = upg.boost.pow(upg.amount);
@@ -766,14 +765,14 @@ function updateIteratorUpg() {
 		document.getElementById("iteratorUnlock").classList.remove('hidden');
 		document.getElementById("iteratorUpgrade").classList.add('hidden');
 	}
-	if (game.plexal.essence.greaterThanOrEqualTo(1)) {
+	if (game.mu.essence.greaterThanOrEqualTo(1)) {
 		document.getElementById("iteratorUnlock").classList.remove('disabled');
 		document.getElementById("iteratorUnlock").classList.add('enabled');
 	} else {
 		document.getElementById("iteratorUnlock").classList.remove('enabled');
 		document.getElementById("iteratorUnlock").classList.add('disabled');  
 	}
-	if (game.plexal.essence.greaterThanOrEqualTo(upg.cost)) {
+	if (game.mu.essence.greaterThanOrEqualTo(upg.cost)) {
 		document.getElementById("iteratorUpgradeButton").classList.remove('disabled');
 		document.getElementById("iteratorUpgradeButton").classList.add('enabled');
 	} else {
@@ -782,16 +781,16 @@ function updateIteratorUpg() {
 	}
 }
 
-function getPlexalUpgBoost(n) {
+function getMuUpgBoost(n) {
 	switch (n) {
 		case 1:
-			return game.plexal.amount.add(1);
+			return game.mu.amount.add(1);
 			break;
 		case 2:
 			return game.iterator.boost;
 			break;
 		case 3:
-			return game.plexal.essence.pow(1.1).add(1);
+			return game.mu.essence.pow(1.1).add(1);
 			break;
 		case 4:
 			return game.reset.amount.root(8);
@@ -800,43 +799,43 @@ function getPlexalUpgBoost(n) {
 			return game.permaStat.totalReset.root(3.5).floor();
 			break;
 		case 6:
-			return game.plexal.essence.root(2);
+			return game.mu.essence.root(2);
 			break;
 	}
 }
 
-function calcPlexalUpg() {
+function calcMuUpg() {
 	for (let i = 1; i < 7; i++) {
-		game.plexal.upgrade.boost[i] = getPlexalUpgBoost(i);
+		game.mu.upgrade.boost[i] = getMuUpgBoost(i);
 	}
-	if (game.plexal.upgrade.boost[4].lessThan(1)) {
-		game.plexal.upgrade.boost[4] = new Decimal(1);
+	if (game.mu.upgrade.boost[4].lessThan(1)) {
+		game.mu.upgrade.boost[4] = new Decimal(1);
 	}
-	if (game.plexal.upgrade.boost[6].lessThan(1)) {
-		game.plexal.upgrade.boost[6] = new Decimal(1);
+	if (game.mu.upgrade.boost[6].lessThan(1)) {
+		game.mu.upgrade.boost[6] = new Decimal(1);
 	}
 }
 
-function updatePlexalUpg() {
-	for (let i = 1; i < game.plexal.upgrade.boost.length; i++) {
-		document.getElementById("plexalUpg" + i + "Boost").innerHTML = findDisplay(game.plexal.upgrade.boost[i]);
+function updateMuUpg() {
+	for (let i = 1; i < game.mu.upgrade.boost.length; i++) {
+		document.getElementById("muUpg" + i + "Boost").innerHTML = findDisplay(game.mu.upgrade.boost[i]);
 	}
-	for (let i = 1; i < game.plexal.upgrade.unlocked.length; i++) {
-		document.getElementById("plexalUpg" + i + "Cost").innerHTML = findDisplay(game.plexal.upgrade.cost[i]);
-		if (game.plexal.upgrade.unlocked[i] == false) {
-			document.getElementById("plexalUpg" + i).classList.remove('noHover');
-			if (game.plexal.essence.greaterThanOrEqualTo(game.plexal.upgrade.cost[i]) && game.plexal.upgrade.unlocked[i-1] == true) {
-				document.getElementById("plexalUpg" + i).classList.add('enabled');
-				document.getElementById("plexalUpg" + i).classList.remove('disabled');
+	for (let i = 1; i < game.mu.upgrade.unlocked.length; i++) {
+		document.getElementById("muUpg" + i + "Cost").innerHTML = findDisplay(game.mu.upgrade.cost[i]);
+		if (game.mu.upgrade.unlocked[i] == false) {
+			document.getElementById("muUpg" + i).classList.remove('noHover');
+			if (game.mu.essence.greaterThanOrEqualTo(game.mu.upgrade.cost[i]) && game.mu.upgrade.unlocked[i-1] == true) {
+				document.getElementById("muUpg" + i).classList.add('enabled');
+				document.getElementById("muUpg" + i).classList.remove('disabled');
 			} else {
-				document.getElementById("plexalUpg" + i).classList.add('disabled');
-				document.getElementById("plexalUpg" + i).classList.remove('enabled');
+				document.getElementById("muUpg" + i).classList.add('disabled');
+				document.getElementById("muUpg" + i).classList.remove('enabled');
 			}
 		} else {
-			document.getElementById("plexalUpg" + i).classList.remove('disabled');
-			document.getElementById("plexalUpg" + i).classList.remove('enabled');
-			document.getElementById("plexalUpg" + i).classList.add('plexal');
-			document.getElementById("plexalUpg" + i).classList.add('noHover');
+			document.getElementById("muUpg" + i).classList.remove('disabled');
+			document.getElementById("muUpg" + i).classList.remove('enabled');
+			document.getElementById("muUpg" + i).classList.add('mu');
+			document.getElementById("muUpg" + i).classList.add('noHover');
 		}
 	}
 }
@@ -845,17 +844,17 @@ function updateStat() {
 	document.getElementById("timePlayed").innerHTML = findTimeDisplay(game.permaStat.timePlayed);
 	document.getElementById("highestNum").innerHTML = findDisplay(game.permaStat.highestNum);
 	document.getElementById("totalReset").innerHTML = "You have reseted a total of " + findDisplay(game.permaStat.totalReset) + " time" + pluralCheck(game.permaStat.totalReset, true);
-	document.getElementById("plexalAmount").innerHTML = findDisplay(game.plexal.amount) + " time" + pluralCheck(game.plexal.amount, true);
+	document.getElementById("muAmount").innerHTML = findDisplay(game.mu.amount) + " time" + pluralCheck(game.mu.amount, true);
 	if (game.permaStat.totalReset.greaterThan(0)) {
 		document.getElementById("totalReset").classList.remove('hidden');
 	} else {
 		document.getElementById("totalReset").classList.add('hidden');
 	}
-	document.getElementById("plexalTime").innerHTML = findTimeDisplay(game.plexal.time);
+	document.getElementById("muTime").innerHTML = findTimeDisplay(game.mu.time);
 }
 
 function calcAuto() {
-	if (game.plexal.upgrade.unlocked[7]) {
+	if (game.mu.upgrade.unlocked[7]) {
 		game.auto.tabUnlocked = true;
 		game.auto.unlocked[0] = true;
 		game.auto.unlocked[1] = true;
@@ -929,10 +928,10 @@ function updateHotkey() {
 	} else {
 		document.getElementById("hotkeyReset").classList.add('hidden');
 	}
-	if (game.plexal.amount.greaterThan(0)) {
-		document.getElementById("hotkeyPlexal").classList.remove('hidden');
+	if (game.mu.amount.greaterThan(0)) {
+		document.getElementById("hotkeyMu").classList.remove('hidden');
 	} else {
-		document.getElementById("hotkeyPlexal").classList.add('hidden');
+		document.getElementById("hotkeyMu").classList.add('hidden');
 	}
 }
 
@@ -1007,7 +1006,7 @@ function calcAll() {
 		achievement.unlock5.hidden = false;
 	}
 	if (game.number.greaterThan(Decimal.fromComponents(1, 2, 60))) {
-		game.plexal.unlocked = true;
+		game.mu.unlocked = true;
 	}
 	if (game.number.greaterThan(Decimal.fromComponents(1, 3, 20))) {
 		achievement.inflate.complete();
@@ -1022,7 +1021,7 @@ function calcAll() {
 		achievement.endgame.complete();
 	}
 	calcMult();
-	calcPlexalUpg();
+	calcMuUpg();
 	calcAuto();
 }
 
@@ -1031,7 +1030,7 @@ function updateAll() {
 	document.getElementById("multPerSecond").innerHTML = findDisplay(game.mult.generation[1]);
 	document.getElementById("number").innerHTML = findDisplay(game.number);
 	updateTab();
-	updatePlexal();
+	updateMu();
 	if (!document.getElementById("mult").classList.contains("hidden")) {
 		updateReset();
 		updateMult();
@@ -1040,8 +1039,8 @@ function updateAll() {
 	if (!document.getElementById("iterator").classList.contains("hidden")) {
 		updateIteratorUpg();
 	}
-	if (!document.getElementById("plexalUpgrade").classList.contains("hidden")) {
-		updatePlexalUpg();
+	if (!document.getElementById("muUpgrade").classList.contains("hidden")) {
+		updateMuUpg();
 	}
 	if (!document.getElementById("stat").classList.contains("hidden")) {
 		updateStat();
@@ -1150,7 +1149,7 @@ function reset() {
 		game.permaStat.totalReset = game.permaStat.totalReset.add(1);
 		achievement.reset.complete();
 		calcReset();
-		game.plexal.resetted = true;
+		game.mu.resetted = true;
 	}
 }
 
@@ -1173,39 +1172,39 @@ function maxReset() {
 			game.permaStat.totalReset = game.permaStat.totalReset.add(buyAmount);
 			achievement.reset.complete();
 			calcReset();
-			game.plexal.resetted = true;
+			game.mu.resetted = true;
 		}
 	}
 }
 
-function plexal() {
+function mu() {
 	if (game.number.greaterThanOrEqualTo(Decimal.fromComponents(1, 2, 100))) {
-		game.plexal.essence = game.plexal.essence.add(getPlexalGain());
+		game.mu.essence = game.mu.essence.add(getMuGain());
 		game.number = newGame().number;
 		game.mult = newGame().mult;
 		game.reset = newGame().reset;
-		if (game.plexal.upgrade.unlocked[5]) {
-			game.reset.amount = game.plexal.upgrade.boost[5];
+		if (game.mu.upgrade.unlocked[5]) {
+			game.reset.amount = game.mu.upgrade.boost[5];
 		}
 		game.iterator.iteration = newGame().iterator.iteration;
-		game.plexal.amount = game.plexal.amount.add(1);
-		game.permaStat.totalPlexal = game.permaStat.totalPlexal.add(1);
-		if (game.plexal.time < 1000) {
-			achievement.plexalFast.complete();
+		game.mu.amount = game.mu.amount.add(1);
+		game.permaStat.totalMu = game.permaStat.totalMu.add(1);
+		if (game.mu.time < 1000) {
+			achievement.muFast.complete();
 		}
-		game.plexal.time = 0;
-		if (!game.plexal.resetted) {
-			achievement.plexalNoReset.complete();
+		game.mu.time = 0;
+		if (!game.mu.resetted) {
+			achievement.muNoReset.complete();
 		}
-		game.plexal.resetted = false;
-		achievement.plexal.complete();
-		calcPlexal();
+		game.mu.resetted = false;
+		achievement.mu.complete();
+		calcMu();
 	}
 }
 
 function unlockIterator() {
-	if (game.plexal.essence.greaterThanOrEqualTo(1)) {
-		game.plexal.essence = game.plexal.essence.sub(1);
+	if (game.mu.essence.greaterThanOrEqualTo(1)) {
+		game.mu.essence = game.mu.essence.sub(1);
 		game.iterator.unlocked = true;
 	}
 }
@@ -1236,15 +1235,15 @@ function maxIterate() {
 }
 
 function upgradeIterator() {
-	if (game.plexal.essence.greaterThanOrEqualTo(game.iterator.upgrade.cost)) {
-		game.plexal.essence = game.plexal.essence.sub(game.iterator.upgrade.cost)
+	if (game.mu.essence.greaterThanOrEqualTo(game.iterator.upgrade.cost)) {
+		game.mu.essence = game.mu.essence.sub(game.iterator.upgrade.cost)
 		game.iterator.upgrade.amount = game.iterator.upgrade.amount.add(1);
 		calcIteratorUpg();
 	}
 }
 
 function maxUpgradeIterator() {
-	let PE = game.plexal.essence.log10().log10();
+	let PE = game.mu.essence.log10().log10();
 	PE.mag = PE.mag*0.99999;
 	let startCost = game.iterator.upgrade.cost.log10().log10();
 	if (PE.greaterThanOrEqualTo(startCost)) {
@@ -1252,7 +1251,7 @@ function maxUpgradeIterator() {
 		let buyAmount = PE.sub(startCost).div(increase).ceil();
 		let endCost = startCost.add(increase.mul(buyAmount));
 		let totalCost = endCost.sub(increase);
-		game.plexal.essence = game.plexal.essence.sub((new Decimal(10)).pow(totalCost));
+		game.mu.essence = game.mu.essence.sub((new Decimal(10)).pow(totalCost));
 		game.iterator.upgrade.amount = game.iterator.upgrade.amount.add(buyAmount);
 		calcIteratorUpg();
 	}
@@ -1260,11 +1259,11 @@ function maxUpgradeIterator() {
 
 function buyUpgrade(n, type) {
 	switch (type) {
-		case "plexal":
-			if (game.plexal.essence.greaterThanOrEqualTo(game.plexal.upgrade.cost[n]) &&
-			   game.plexal.upgrade.unlocked[n-1] == true && game.plexal.upgrade.unlocked[n] == false) {
-				game.plexal.essence = game.plexal.essence.sub(game.plexal.upgrade.cost[n]);
-				game.plexal.upgrade.unlocked[n] = true;
+		case "mu":
+			if (game.mu.essence.greaterThanOrEqualTo(game.mu.upgrade.cost[n]) &&
+			   game.mu.upgrade.unlocked[n-1] == true && game.mu.upgrade.unlocked[n] == false) {
+				game.mu.essence = game.mu.essence.sub(game.mu.upgrade.cost[n]);
+				game.mu.upgrade.unlocked[n] = true;
 			}
 			break;
 	}
@@ -1373,12 +1372,12 @@ document.addEventListener("keydown", function(input){
 			reset();
 			break;
 		case "R":
-			if (game.plexal.upgrade.unlocked[9]) {
+			if (game.mu.upgrade.unlocked[9]) {
 				maxReset();
 			}
 			break;
 		case "p":
-			plexal();
+			mu();
 			break;
 	}
 });
@@ -1466,9 +1465,9 @@ function createAchievements() {
 	new Achievement("Unlock Multiplier 9", "Good thing these aren't dimensions.", "unlock9");
 	new Achievement("Unlock Multiplier 10", "You're never gonna get over 1.25 of these bad boys.", "unlock10");
 	new Achievement("Reset", "Don't worry, this isn't a hard reset.", "reset");
-	new Achievement("Plexal", ":rippi:", "plexal");
-	new Achievement("Plexal Without Resetting", "No one likes backtracking.", "plexalNoReset");
-	new Achievement("Plexal in less than a second", "I am speed.", "plexalFast");
+	new Achievement("Mu", ":Mu", "mu");
+	new Achievement("Mu Without Resetting", "No one likes backtracking.", "muNoReset");
+	new Achievement("Mu in less than a second", "I am speed.", "muFast");
 	new Achievement("Inflate", "Aarex now officially hate this game.", "inflate");
 	new Achievement("Start Automation", "I've finally added automation. You better thank me now.", "startAuto");
 	new Achievement("Reach a Googolduplex", "Super-duper-duplex.", "googolduplex");
