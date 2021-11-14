@@ -1027,7 +1027,7 @@ function calcAll() {
 }
 
 function updateAll() {
-	document.getElementById("title").innerHTML = "Exponential Madness v" + game.permaStat.version;
+	document.getElementById("title").innerHTML = "Incremental Mania";
 	document.getElementById("multPerSecond").innerHTML = findDisplay(game.mult.generation[1]);
 	document.getElementById("number").innerHTML = findDisplay(game.number);
 	updateTab();
